@@ -28,7 +28,7 @@ industry = st.selectbox(
         "Other"
     ]
 )
-if industry == "Others":
+if industry == "Other":
     industry = st.text_input("Please specify the industry")
     
 location = st.text_input("Enter Location (e.g., Hyderabad)")
