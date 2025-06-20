@@ -3,13 +3,14 @@ import warnings
 from crewai import Agent, Task, Crew, LLM
 from crewai_tools import SerperDevTool, WebsiteSearchTool
 from dotenv import load_dotenv
+import streamlit as st
 load_dotenv()
 
 warnings.filterwarnings("ignore")
 
 # Load API keys
-gemini_api_key = os.getenv("GEMINI_API_KEY")
-serper_api_key = os.getenv("SERPER_API_KEY")
+gemini_api_key = st.secrets["GEMINI_API_KEY"]
+serper_api_key = st.secrets["SERPER_API_KEY"]
 
 # Set up LLM
 gemini_llm = LLM(
