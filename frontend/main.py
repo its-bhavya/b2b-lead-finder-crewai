@@ -1,5 +1,9 @@
 import streamlit as st
 import time 
+import os, sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from backend.agents.company_finder import get_leads
 
 st.set_page_config(page_title="B2B Lead Finder", layout="wide")
 
@@ -11,16 +15,13 @@ location = st.text_input("Enter Location (e.g., Hyderabad)")
 num_companies = st.slider("Number of Companies", 1, 100, 10)
 
 if st.button("Find Leads"):
-    params = {
-        "industry": industry,
-        "location": location,
-        "num_companies": num_companies
-    }
-    
-    #Placeholder for response
-    st.spinner("Fetching leads...")
-    time.sleep(1)  
-    st.markdown("### Found Leads")
-    st.write(f"Industry: {industry}")
-    st.write(f"Location: {location}")
-    st.write(f"Number of Companies: {num_companies}")
+    with st.spinner("Fetching leads..."):
+        try:
+            results = get_leads(industry, location, num_companies)
+            st.success("Leads fetched successfully!")
+
+            for company, url in results.items():
+                st.markdown(f"**{company}** → [LinkedIn]({url})")
+
+        except Exception as e:
+            st.error(f"Error: {e}")
