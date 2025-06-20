@@ -13,7 +13,7 @@ serper_api_key = os.getenv("SERPER_API_KEY")
 
 # Set up LLM
 gemini_llm = LLM(
-    model='gemini/gemini-2.0-flash',
+    model='gemini/gemini-1.5-flash',
     api_key=gemini_api_key,
     temperature=0.0
 )
@@ -39,7 +39,7 @@ def get_leads(industry: str, location: str, num_companies: int) -> dict:
         backstory="An expert in B2B company research.",
         tools=[search_tool, web_rag_tool],
         llm=gemini_llm,
-        verbose=False
+        verbose=True
     )
 
     linkedin_finder = Agent(
@@ -51,7 +51,7 @@ def get_leads(industry: str, location: str, num_companies: int) -> dict:
         backstory="You validate each result is a proper LinkedIn company profile.",
         tools=[search_tool, web_rag_tool],
         llm=gemini_llm,
-        verbose=False
+        verbose=True
     )
 
     # Tasks
@@ -62,7 +62,7 @@ def get_leads(industry: str, location: str, num_companies: int) -> dict:
     )
 
     linkedin_task = Task(
-        description="For the list of companies from the previous task, find their official LinkedIn pages. "
+        description="For the list of companies, find their official LinkedIn pages. "
                     "Return a JSON with company names as keys and LinkedIn URLs as values.",
         expected_output="A raw JSON list with each company's name associated to its LinkedIn URL.",
         agent=linkedin_finder
@@ -72,7 +72,8 @@ def get_leads(industry: str, location: str, num_companies: int) -> dict:
         agents=[lead_researcher, linkedin_finder],
         tasks=[lead_research_task, linkedin_task],
         llm=gemini_llm,
-        verbose=False
+        verbose=True,
+        memory=True
     )
 
     results = crew.kickoff(inputs={
